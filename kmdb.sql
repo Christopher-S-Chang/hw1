@@ -117,7 +117,9 @@
 DROP TABLE IF EXISTS movies;
 DROP TABLE IF EXISTS studios;
 DROP TABLE IF EXISTS actors;
+DROP TABLE IF EXISTS characters;
 DROP TABLE IF EXISTS roles;
+
 -- Create new tables, according to your domain model
 -- TODO!
 
@@ -125,8 +127,8 @@ CREATE TABLE movies (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT,
     year TEXT,
-    MPAA_rating TEXT,
-    studio_id TEXT
+    rating TEXT,
+    studios_id TEXT
 );
 
 CREATE TABLE studios (
@@ -140,16 +142,88 @@ CREATE TABLE actors (
     last_name TEXT
 );
 
+CREATE TABLE characters (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT
+);
+
 CREATE TABLE roles (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    movie_id INTEGER,
-    character TEXT,
-    actors_id INTEGER
+    movies_id INTEGER,
+    actors_id INTEGER,
+    characters_id INTEGER
 );
 
 -- Insert data into your database that reflects the sample data shown above
 -- Use hard-coded foreign key IDs when necessary
 -- TODO!
+
+INSERT INTO studios (
+    name
+) VALUES (
+    "Warner Bros."
+);
+
+INSERT INTO movies
+(title, year, rating, studios_id) 
+VALUES 
+("Batman Begins", "2005", "PG-13", "1"), 
+("The Dark Knight", "2008","PG-13", "1"), 
+("The Dark Knight Rises", "2012", "PG-13", "1")
+;
+
+INSERT INTO actors 
+(first_name,last_name
+) VALUES 
+("Christian", "Bale"), --1     
+("Michael", "Caine"),  --2      
+("Liam", "Neeson"),    --3    
+("Katie", "Holmes"),   --4    
+("Gary", "Oldman"),    --5             
+("Heath", "Ledger"),    --6    
+("Aaron", "Eckhart"),    --7      
+("Maggie", "Gyllenhaal"), --8   
+("Tom", "Hardy"),         --9   
+("Joseph", "Gordon-Levitt"), --10 
+("Anne", "Hathaway")         --11
+;
+
+INSERT INTO characters (
+    name
+) VALUES 
+("Bruce Wayne"),            --1
+("Alfred"),                 --2
+("Ra's Al Ghul"),           --3
+("Rachel Dawes"),           --4
+("Commissioner Gordon"),    --5
+("Joker"),                  --6
+("Harvey Dent"),            --7
+("Bane"),                   --8
+("John Blake"),             --9
+("Selina Kyle")             --10
+;
+
+INSERT INTO roles (
+    movies_id,
+    actors_id,
+    characters_id
+) VALUES
+("1", "1", "1"),
+("1", "2", "2"),
+("1", "3", "3"),
+("1", "4", "4"),
+("1", "5", "5"),
+("2", "1", "1"),
+("2", "6", "6"),
+("2", "7", "7"),
+("2", "2", "2"),
+("2", "8", "4"),
+("3", "1", "1"),
+("3", "5", "5"),
+("3", "9", "8"),
+("3", "10", "9"),
+("3", "11", "10")
+; 
 
 -- Prints a header for the movies output
 .print "Movies"
@@ -158,6 +232,11 @@ CREATE TABLE roles (
 
 -- The SQL statement for the movies output
 -- TODO!
+SELECT m.title, m.year, m.rating, s.name 
+FROM movies m
+    INNER JOIN studios s on m.studios_id = s.id
+    ;
+
 
 -- Prints a header for the cast output
 .print ""
@@ -166,5 +245,12 @@ CREATE TABLE roles (
 .print ""
 
 
+
 -- The SQL statement for the cast output
 -- TODO!
+SELECT m.title, a.first_name, a.last_name, c.name
+FROM movies m
+    INNER JOIN roles r ON r.movies_id = m.id
+        INNER JOIN characters c ON c.id = r.characters_id
+            INNER JOIN actors a on a.id = r.actors_id
+            ;
