@@ -128,7 +128,7 @@ CREATE TABLE movies (
     title TEXT,
     year TEXT,
     rating TEXT,
-    studios_id TEXT
+    studio_id TEXT
 );
 
 CREATE TABLE studios (
@@ -149,9 +149,9 @@ CREATE TABLE characters (
 
 CREATE TABLE roles (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    movies_id INTEGER,
-    actors_id INTEGER,
-    characters_id INTEGER
+    movie_id INTEGER,
+    actor_id INTEGER,
+    character_id INTEGER
 );
 
 -- Insert data into your database that reflects the sample data shown above
@@ -161,11 +161,11 @@ CREATE TABLE roles (
 INSERT INTO studios (
     name
 ) VALUES (
-    "Warner Bros."
+    "Warner Bros." --1
 );
 
 INSERT INTO movies
-(title, year, rating, studios_id) 
+(title, year, rating, studio_id) 
 VALUES 
 ("Batman Begins", "2005", "PG-13", "1"), 
 ("The Dark Knight", "2008","PG-13", "1"), 
@@ -188,7 +188,7 @@ INSERT INTO actors
 ("Anne", "Hathaway")         --11
 ;
 
-INSERT INTO characters (
+INSERT INTO characters ( -- in case we were ever intersted in knowing what actors have played the 'same' character
     name
 ) VALUES 
 ("Bruce Wayne"),            --1
@@ -204,9 +204,9 @@ INSERT INTO characters (
 ;
 
 INSERT INTO roles (
-    movies_id,
-    actors_id,
-    characters_id
+    movie_id,
+    actor_id,
+    character_id
 ) VALUES
 ("1", "1", "1"),
 ("1", "2", "2"),
@@ -234,9 +234,8 @@ INSERT INTO roles (
 -- TODO!
 SELECT m.title, m.year, m.rating, s.name 
 FROM movies m
-    INNER JOIN studios s on m.studios_id = s.id
+    INNER JOIN studios s on m.studio_id = s.id
     ;
-
 
 -- Prints a header for the cast output
 .print ""
@@ -244,13 +243,11 @@ FROM movies m
 .print "========"
 .print ""
 
-
-
 -- The SQL statement for the cast output
 -- TODO!
 SELECT m.title, a.first_name, a.last_name, c.name
 FROM movies m
-    INNER JOIN roles r ON r.movies_id = m.id
-        INNER JOIN characters c ON c.id = r.characters_id
-            INNER JOIN actors a on a.id = r.actors_id
+    INNER JOIN roles r ON r.movie_id = m.id
+        INNER JOIN characters c ON c.id = r.character_id
+            INNER JOIN actors a on a.id = r.actor_id
             ;
